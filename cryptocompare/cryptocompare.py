@@ -9,11 +9,11 @@ URL_PRICE = 'https://min-api.cryptocompare.com/data/pricemulti?fsyms={}&tsyms={}
 URL_PRICE_MULTI = 'https://min-api.cryptocompare.com/data/pricemulti?fsyms={}&tsyms={}&e={}&tryConversion={}&extraParams={}&sign={}'
 URL_PRICE_MULTI_FULL = 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms={}&tsyms={}&e={}&tryConversion={}&extraParams={}&sign={}'
 
-URL_HIST_PRICE_TIMESTAMP = 'https://min-api.cryptocompare.com/data/pricehistorical?fsym={}&tsyms={}&ts={}&e={}'
+URL_HIST_PRICE_TIMESTAMP = 'https://min-api.cryptocompare.com/data/pricehistorical?fsym={}&tsyms={}&ts={}&e={}&calculationType={}&tryConversion={}&extraParams={}&sign={}'
 
-URL_HIST_PRICE_DAY = 'https://min-api.cryptocompare.com/data/histoday?fsym={}&tsym={}'
-URL_HIST_PRICE_HOUR = 'https://min-api.cryptocompare.com/data/histohour?fsym={}&tsym={}'
-URL_HIST_PRICE_MINUTE = 'https://min-api.cryptocompare.com/data/histominute?fsym={}&tsym={}&limit={}'
+URL_HIST_PRICE_DAY = 'https://min-api.cryptocompare.com/data/histoday?fsym={}&tsym={}&e={}&aggregate={}&aggregatePredictableTimePeriods={}&limit={}&allData={}&toTs={}&tryConversion={}&extraParams={}&sign={}'
+URL_HIST_PRICE_HOUR = 'https://min-api.cryptocompare.com/data/histohour?fsym={}&tsym={}&e={}&aggregate={}&aggregatePredictableTimePeriods={}&limit={}&toTs={}&tryConversion={}&extraParams={}&sign={}'
+URL_HIST_PRICE_MINUTE = 'https://min-api.cryptocompare.com/data/histominute?fsym={}&tsym={}&e={}&aggregate={}&aggregatePredictableTimePeriods={}&limit={}&toTs={}&tryConversion={}&extraParams={}&sign={}'
 
 URL_AVG = 'https://min-api.cryptocompare.com/data/generateAvg?fsym={}&tsym={}&e={}'
 
@@ -76,17 +76,20 @@ def get_historical_price_ts(coin=defCOIN, curr=defCURRENCY, timestamp=time.time(
         timestamp = time.mktime(timestamp.timetuple())
     return query_cryptocompare( URL_HIST_PRICE_TIMESTAMP.format( coin, format_parameter(curr), int(timestamp), format_parameter(exchange), calculationType, int(tryConversion), appName, int(sign) ) )
 
+#TODO check 1 <= agregate <= 30
+#TODO check curr/coin are not arrays
+def get_historical_price_day(coin=defCOIN, curr=defCURRENCY, exchange='CCCAGG', aggregate=1, aggregatePredictableTimePeriods=True, limit=LIMIT, allData=False, toTs=time.time(), tryConversion=True, appName=' ', sign=False):
+    return query_cryptocompare( URL_HIST_PRICE_DAY.format( coin, format_parameter(curr), format_parameter(exchange), int(aggregate), int(aggregatePredictableTimePeriods), limit, int(allData), int(toTs), int(tryConversion), appName, int(sign) ) )
 
-def get_historical_price_day(coin=defCOIN, curr=defCURRENCY):
-    return query_cryptocompare(URL_HIST_PRICE_DAY.format(coin, format_parameter(curr)))
+#TODO check 1 <= agregate <= 30
+#TODO check curr/coin are not arrays
+def get_historical_price_hour(coin=defCOIN, curr=defCURRENCY, exchange='CCCAGG', aggregate=1, aggregatePredictableTimePeriods=True, limit=LIMIT, toTs=time.time(), tryConversion=True, appName=' ', sign=False):
+    return query_cryptocompare( URL_HIST_PRICE_HOUR.format( coin, format_parameter(curr), format_parameter(exchange), int(aggregate), int(aggregatePredictableTimePeriods), limit, int(toTs), int(tryConversion), appName, int(sign) ) )
 
-
-def get_historical_price_hour(coin=defCOIN, curr=defCURRENCY):
-    return query_cryptocompare(URL_HIST_PRICE_HOUR.format(coin, format_parameter(curr)))
-
-
-def get_historical_price_minute(coin=defCOIN, curr=defCURRENCY, limit=LIMIT):
-    return query_cryptocompare(URL_HIST_PRICE_MINUTE.format(coin, format_parameter(curr), limit))
+#TODO check 1 <= agregate <= 30
+#TODO check curr/coin are not arrays
+def get_historical_price_minute(coin=defCOIN, curr=defCURRENCY, exchange='CCCAGG', aggregate=1, aggregatePredictableTimePeriods=True, limit=LIMIT, toTs=time.time(), tryConversion=True, appName=' ', sign=False):
+    return query_cryptocompare( URL_HIST_PRICE_MINUTE.format( coin, format_parameter(curr), format_parameter(exchange), int(aggregate), int(aggregatePredictableTimePeriods), limit, int(toTs), int(tryConversion), appName, int(sign) ) )
 
 
 def get_avg(coin=defCOIN, curr=defCURRENCY, exchange='CCCAGG'):
