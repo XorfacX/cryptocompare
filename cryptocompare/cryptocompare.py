@@ -30,8 +30,8 @@ MARKETCAP = 'MKTCAP'
 
 # DEFAULTS
 defCOIN = 'BTC'
-defCURRENCY = ['USD', 'EUR']
-LIMIT = 1440
+defCURRENCY = 'EUR'
+LIMIT = 2000
 ###############################################################################
 
 def query_cryptocompare(url, errorCheck=True):
