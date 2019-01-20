@@ -2,20 +2,23 @@ import requests
 import time
 import datetime
 
-# API
-URL_COIN_LIST = 'https://www.cryptocompare.com/api/data/coinlist/'
-
+## API
+ # Price
 URL_PRICE = 'https://min-api.cryptocompare.com/data/pricemulti?fsyms={}&tsyms={}&e={}&tryConversion={}&extraParams={}&sign={}'
 URL_PRICE_MULTI = 'https://min-api.cryptocompare.com/data/pricemulti?fsyms={}&tsyms={}&e={}&tryConversion={}&extraParams={}&sign={}'
 URL_PRICE_MULTI_FULL = 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms={}&tsyms={}&e={}&tryConversion={}&extraParams={}&sign={}'
 
+URL_AVG = 'https://min-api.cryptocompare.com/data/generateAvg?fsym={}&tsym={}&e={}&extraParams={}&sign={}'
+
+ # Historical
 URL_HIST_PRICE_TIMESTAMP = 'https://min-api.cryptocompare.com/data/pricehistorical?fsym={}&tsyms={}&ts={}&e={}&calculationType={}&tryConversion={}&extraParams={}&sign={}'
 
 URL_HIST_PRICE_DAY = 'https://min-api.cryptocompare.com/data/histoday?fsym={}&tsym={}&e={}&aggregate={}&aggregatePredictableTimePeriods={}&limit={}&allData={}&toTs={}&tryConversion={}&extraParams={}&sign={}'
 URL_HIST_PRICE_HOUR = 'https://min-api.cryptocompare.com/data/histohour?fsym={}&tsym={}&e={}&aggregate={}&aggregatePredictableTimePeriods={}&limit={}&toTs={}&tryConversion={}&extraParams={}&sign={}'
 URL_HIST_PRICE_MINUTE = 'https://min-api.cryptocompare.com/data/histominute?fsym={}&tsym={}&e={}&aggregate={}&aggregatePredictableTimePeriods={}&limit={}&toTs={}&tryConversion={}&extraParams={}&sign={}'
 
-URL_AVG = 'https://min-api.cryptocompare.com/data/generateAvg?fsym={}&tsym={}&e={}'
+ # General Info
+URL_COIN_LIST = 'https://www.cryptocompare.com/api/data/coinlist/'
 
 URL_EXCHANGES = 'https://www.cryptocompare.com/api/data/exchanges'
 
@@ -29,7 +32,7 @@ CHANGE_PERCENT = 'CHANGEPCT24HOUR'
 MARKETCAP = 'MKTCAP'
 
 # DEFAULTS
-defCOIN = 'BTC'
+defCOIN = 'BTC' #NB: be careful that the BTC ticker is not always BTC (can be BTC, XBT, XBTUSD, ...)
 defCURRENCY = 'EUR'
 LIMIT = 2000
 ###############################################################################
@@ -60,7 +63,7 @@ def get_coin_list(format=False):
     else:
         return response
 
-# TODO: add option to filter json response according to a list of fields
+#TODO: add option to filter json response according to a list of fields
 #TODO check exchange name is in list
 def get_price(coin=defCOIN, curr=defCURRENCY, exchange='CCCAGG', tryConversion=True, appName=' ', sign=False, full=False):
     if full:
@@ -70,6 +73,12 @@ def get_price(coin=defCOIN, curr=defCURRENCY, exchange='CCCAGG', tryConversion=T
     else:
         return query_cryptocompare( URL_PRICE.format( coin, format_parameter(curr), format_parameter(exchange), int(tryConversion), appName, int(sign) ) )
 
+
+def get_avg(coin=defCOIN, curr=defCURRENCY, exchange='CCCAGG', appName=' ', sign=False):
+    response = query_cryptocompare( URL_AVG.format( coin, curr, format_parameter(exchange), appName, int(sign) ) )
+    if response:
+        return response['RAW']
+        
 #TODO check  calculationType is in ['Close', 'MidHighLow', 'VolFVolT']
 def get_historical_price_ts(coin=defCOIN, curr=defCURRENCY, timestamp=time.time(), exchange='CCCAGG', calculationType='Close', tryConversion=True, appName=' ', sign=False):
     if isinstance(timestamp, datetime.datetime):
@@ -91,11 +100,6 @@ def get_historical_price_hour(coin=defCOIN, curr=defCURRENCY, exchange='CCCAGG',
 def get_historical_price_minute(coin=defCOIN, curr=defCURRENCY, exchange='CCCAGG', aggregate=1, aggregatePredictableTimePeriods=True, limit=LIMIT, toTs=time.time(), tryConversion=True, appName=' ', sign=False):
     return query_cryptocompare( URL_HIST_PRICE_MINUTE.format( coin, format_parameter(curr), format_parameter(exchange), int(aggregate), int(aggregatePredictableTimePeriods), limit, int(toTs), int(tryConversion), appName, int(sign) ) )
 
-
-def get_avg(coin=defCOIN, curr=defCURRENCY, exchange='CCCAGG'):
-    response = query_cryptocompare(URL_AVG.format(coin, curr, format_parameter(exchange)))
-    if response:
-        return response['RAW']
 
 
 def get_exchanges():
