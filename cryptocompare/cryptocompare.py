@@ -2,6 +2,8 @@ import requests
 import time
 import datetime
 
+API_KEY = 'DEFINE_ME' #TODO handle API KEY from external file
+
 ## API
  # Price
 URL_PRICE = 'https://min-api.cryptocompare.com/data/pricemulti?fsyms={}&tsyms={}&e={}&tryConversion={}&extraParams={}&sign={}'
@@ -18,9 +20,9 @@ URL_HIST_PRICE_HOUR = 'https://min-api.cryptocompare.com/data/histohour?fsym={}&
 URL_HIST_PRICE_MINUTE = 'https://min-api.cryptocompare.com/data/histominute?fsym={}&tsym={}&e={}&aggregate={}&aggregatePredictableTimePeriods={}&limit={}&toTs={}&tryConversion={}&extraParams={}&sign={}'
 
  # General Info
-URL_COIN_LIST = 'https://www.cryptocompare.com/api/data/coinlist/'
+URL_COIN_LIST = 'https://min-api.cryptocompare.com/data/all/coinlist?builtOn={}&extraParams={}&sign={}'
 
-URL_EXCHANGES = 'https://www.cryptocompare.com/api/data/exchanges'
+URL_EXCHANGES = 'https://min-api.cryptocompare.com/data/exchanges/general?extraParams={}&sign={}&api_key=' + API_KEY
 
 # FIELDS
 PRICE = 'PRICE'
@@ -56,7 +58,6 @@ def format_parameter(parameter):
 
 ###############################################################################
 
-#TODO handle API KEY
 
 def get_coin_list(format=False, builtOn='', appName=' ', sign=False):
     response = query_cryptocompare( URL_COIN_LIST.format( builtOn, appName, int(sign) ), False )['Data']
@@ -65,6 +66,11 @@ def get_coin_list(format=False, builtOn='', appName=' ', sign=False):
     else:
         return response
 
+def get_exchanges(appName=' ', sign=False):
+    response = query_cryptocompare( URL_EXCHANGES.format( appName, int(sign) ) )
+    if response:
+        return response['Data']
+        
 #TODO: add option to filter json response according to a list of fields
 #TODO check exchange name is in list
 def get_price(coin=defCOIN, curr=defCURRENCY, exchange='CCCAGG', tryConversion=True, appName=' ', sign=False, full=False):
@@ -102,9 +108,3 @@ def get_historical_price_hour(coin=defCOIN, curr=defCURRENCY, exchange='CCCAGG',
 def get_historical_price_minute(coin=defCOIN, curr=defCURRENCY, exchange='CCCAGG', aggregate=1, aggregatePredictableTimePeriods=True, limit=LIMIT, toTs=time.time(), tryConversion=True, appName=' ', sign=False):
     return query_cryptocompare( URL_HIST_PRICE_MINUTE.format( coin, format_parameter(curr), format_parameter(exchange), int(aggregate), int(aggregatePredictableTimePeriods), limit, int(toTs), int(tryConversion), appName, int(sign) ) )
 
-
-
-def get_exchanges():
-    response = query_cryptocompare(URL_EXCHANGES)
-    if response:
-        return response['Data']
