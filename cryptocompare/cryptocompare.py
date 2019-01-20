@@ -4,14 +4,18 @@ import datetime
 
 # API
 URL_COIN_LIST = 'https://www.cryptocompare.com/api/data/coinlist/'
-URL_PRICE = 'https://min-api.cryptocompare.com/data/pricemulti?fsyms={}&tsyms={}'
-URL_PRICE_MULTI = 'https://min-api.cryptocompare.com/data/pricemulti?fsyms={}&tsyms={}'
-URL_PRICE_MULTI_FULL = 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms={}&tsyms={}'
+
+URL_PRICE = 'https://min-api.cryptocompare.com/data/pricemulti?fsyms={}&tsyms={}&e={}'
+URL_PRICE_MULTI = 'https://min-api.cryptocompare.com/data/pricemulti?fsyms={}&tsyms={}&e={}'
+URL_PRICE_MULTI_FULL = 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms={}&tsyms={}&e={}'
+
 URL_HIST_PRICE = 'https://min-api.cryptocompare.com/data/pricehistorical?fsym={}&tsyms={}&ts={}&e={}'
 URL_HIST_PRICE_DAY = 'https://min-api.cryptocompare.com/data/histoday?fsym={}&tsym={}'
 URL_HIST_PRICE_HOUR = 'https://min-api.cryptocompare.com/data/histohour?fsym={}&tsym={}'
 URL_HIST_PRICE_MINUTE = 'https://min-api.cryptocompare.com/data/histominute?fsym={}&tsym={}&limit={}'
+
 URL_AVG = 'https://min-api.cryptocompare.com/data/generateAvg?fsym={}&tsym={}&e={}'
+
 URL_EXCHANGES = 'https://www.cryptocompare.com/api/data/exchanges'
 
 # FIELDS
@@ -55,15 +59,14 @@ def get_coin_list(format=False):
         return response
 
 # TODO: add option to filter json response according to a list of fields
-def get_price(coin, curr=CURR, full=False):
+#TODO check exchange name is in list
+def get_price(coin, curr=CURR, exchange='CCCAGG', full=False):
     if full:
-        return query_cryptocompare(URL_PRICE_MULTI_FULL.format(format_parameter(coin),
-            format_parameter(curr)))
+        return query_cryptocompare( URL_PRICE_MULTI_FULL.format( format_parameter(coin), format_parameter(curr), format_parameter(exchange) ) )
     if isinstance(coin, list):
-        return query_cryptocompare(URL_PRICE_MULTI.format(format_parameter(coin),
-            format_parameter(curr)))
+        return query_cryptocompare( URL_PRICE_MULTI.format( format_parameter(coin), format_parameter(curr), format_parameter(exchange) ) )
     else:
-        return query_cryptocompare(URL_PRICE.format(coin, format_parameter(curr)))
+        return query_cryptocompare( URL_PRICE.format(coin, format_parameter(curr), format_parameter(exchange) ) )
 
 def get_historical_price(coin, curr=CURR, timestamp=time.time(), exchange='CCCAGG'):
     if isinstance(timestamp, datetime.datetime):
