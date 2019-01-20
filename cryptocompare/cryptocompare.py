@@ -56,8 +56,10 @@ def format_parameter(parameter):
 
 ###############################################################################
 
-def get_coin_list(format=False):
-    response = query_cryptocompare(URL_COIN_LIST, False)['Data']
+#TODO handle API KEY
+
+def get_coin_list(format=False, builtOn='', appName=' ', sign=False):
+    response = query_cryptocompare( URL_COIN_LIST.format( builtOn, appName, int(sign) ), False )['Data']
     if format:
         return list(response.keys())
     else:
